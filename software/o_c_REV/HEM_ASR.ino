@@ -22,7 +22,7 @@
 
 #include "HSRingBufferManager.h" // Singleton Ring Buffer manager
 
-class ASR : public HemisphereApplet {
+class ASRApplet : public HemisphereApplet {
 public:
 
     const char* applet_name() {
@@ -78,7 +78,7 @@ public:
             quantizer.Configure(OC::Scales::GetScale(scale), 0xffff);
         }
     }
-        
+
     uint32_t OnDataRequest() {
         uint32_t data = 0;
         byte ix = buffer_m->GetIndex();
@@ -101,7 +101,7 @@ protected:
         help[HEMISPHERE_HELP_ENCODER]  = "Index/Scale";
         //                               "------------------" <-- Size Guide
     }
-    
+
 private:
     int cursor;
     RingBufferManager *buffer_m = buffer_m->get();
@@ -110,7 +110,7 @@ private:
     int index_mod; // Effect of modulation
     
     void DrawInterface() {
-        // Show Link icon if linked with another ASR
+        // Show Link icon if linked with another ASRApplet
         if (buffer_m->IsLinked(hemisphere)) gfxIcon(56, 1, LINK_ICON);
 
         // Index (shared between all instances of ASR)
@@ -142,18 +142,18 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 //// Hemisphere Applet Functions
 ///
-///  Once you run the find-and-replace to make these refer to ASR,
+///  Once you run the find-and-replace to make these refer to ASRApplet,
 ///  it's usually not necessary to do anything with these functions. You
 ///  should prefer to handle things in the HemisphereApplet child class
 ///  above.
 ////////////////////////////////////////////////////////////////////////////////
-ASR ASR_instance[2];
+ASRApplet ASRApplet_instance[2];
 
-void ASR_Start(bool hemisphere) {ASR_instance[hemisphere].BaseStart(hemisphere);}
-void ASR_Controller(bool hemisphere, bool forwarding) {ASR_instance[hemisphere].BaseController(forwarding);}
-void ASR_View(bool hemisphere) {ASR_instance[hemisphere].BaseView();}
-void ASR_OnButtonPress(bool hemisphere) {ASR_instance[hemisphere].OnButtonPress();}
-void ASR_OnEncoderMove(bool hemisphere, int direction) {ASR_instance[hemisphere].OnEncoderMove(direction);}
-void ASR_ToggleHelpScreen(bool hemisphere) {ASR_instance[hemisphere].HelpScreen();}
-uint32_t ASR_OnDataRequest(bool hemisphere) {return ASR_instance[hemisphere].OnDataRequest();}
-void ASR_OnDataReceive(bool hemisphere, uint32_t data) {ASR_instance[hemisphere].OnDataReceive(data);}
+void ASRApplet_Start(bool hemisphere) {ASRApplet_instance[hemisphere].BaseStart(hemisphere);}
+void ASRApplet_Controller(bool hemisphere, bool forwarding) {ASRApplet_instance[hemisphere].BaseController(forwarding);}
+void ASRApplet_View(bool hemisphere) {ASRApplet_instance[hemisphere].BaseView();}
+void ASRApplet_OnButtonPress(bool hemisphere) {ASRApplet_instance[hemisphere].OnButtonPress();}
+void ASRApplet_OnEncoderMove(bool hemisphere, int direction) {ASRApplet_instance[hemisphere].OnEncoderMove(direction);}
+void ASRApplet_ToggleHelpScreen(bool hemisphere) {ASRApplet_instance[hemisphere].HelpScreen();}
+uint32_t ASRApplet_OnDataRequest(bool hemisphere) {return ASRApplet_instance[hemisphere].OnDataRequest();}
+void ASRApplet_OnDataReceive(bool hemisphere, uint32_t data) {ASRApplet_instance[hemisphere].OnDataReceive(data);}

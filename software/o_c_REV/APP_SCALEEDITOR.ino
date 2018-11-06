@@ -22,10 +22,9 @@
 #include "braids_quantizer_scales.h"
 #include "OC_scales.h"
 #include "HSApplication.h"
-#include "HSMIDI.h"
 #include "SegmentDisplay.h"
 
-class ScaleEditor : public HSApplication, public SystemExclusiveHandler {
+class ScaleEditor : public HSApplication {
 public:
 	void Start() {
 	    current_scale = 0;
@@ -44,8 +43,6 @@ public:
 	}
 
     void Controller() {
-        ListenForSysEx();
-
         // Scale monitor
         int32_t pitch = In(0);
         int32_t quantized = quantizer.Process(pitch, 0, 0);
@@ -62,65 +59,6 @@ public:
         else DrawInterface();
     }
 
-    /* Send SysEx on app suspend and when the left encoder is pressed */
-    void OnSendSysEx() { // Left Enc Push
-        uint8_t V[35];
-        int ix = 0;
-
-        // Encode span
-        uint16_t span = static_cast<uint16_t>(OC::user_scales[current_scale].span);
-        V[ix++] = span & 0xff; // Low byte
-        V[ix++] = (span >> 8) & 0xff; // High byte
-
-        // Encode length
-        V[ix++] = static_cast<uint8_t>(OC::user_scales[current_scale].num_notes);
-
-        // Encode values
-        for (int i = 0; i < 16; i++)
-        {
-            uint16_t note = static_cast<uint16_t>(OC::user_scales[current_scale].notes[i]);
-            V[ix++] = note & 0xff; // Low
-            V[ix++] = (note >> 8) & 0xff; // High
-        }
-
-        UnpackedData unpacked;
-        unpacked.set_data(ix, V);
-        PackedData packed = unpacked.pack();
-        SendSysEx(packed, 'E');
-    }
-
-    /* Send SysEx on app suspend and when the left encoder is pressed */
-    void OnReceiveSysEx() {
-        uint8_t V[35];
-        if (ExtractSysExData(V, 'E')) {
-            int ix = 0;
-
-            // Decode span
-            uint8_t low = V[ix++];
-            uint8_t high = V[ix++];
-            OC::user_scales[current_scale].span = (int16_t)(high << 8) | low;
-
-            // Decode length
-            uint8_t num_notes = V[ix++];
-            OC::user_scales[current_scale].num_notes = constrain(num_notes, 4, 16);
-
-            // Decode values
-            for (int i = 0; i < 16; i++)
-            {
-                uint8_t low = V[ix++];
-                uint8_t high = V[ix++];
-                OC::user_scales[current_scale].notes[i] = (uint16_t)(high << 8) | low;
-            }
-
-            // Reset
-            current_note = 0;
-            undo_value = OC::user_scales[current_scale].notes[current_note];
-            // Configure and force requantize for real-time monitoring purposes
-            quantizer.Configure(OC::Scales::GetScale(current_scale), 0xffff);
-            QuantizeCurrent();
-        }
-    }
-
     /////////////////////////////////////////////////////////////////
     // Control handlers
     /////////////////////////////////////////////////////////////////
@@ -131,7 +69,6 @@ public:
 
     void OnLeftButtonLongPress() {
         if (import_mode) ToggleImportMode();
-        else OnSendSysEx();
     }
 
     void OnRightButtonPress() {
@@ -357,11 +294,7 @@ void SCALEEDITOR_isr() {
 	return scale_editor_instance.BaseController();
 }
 
-void SCALEEDITOR_handleAppEvent(OC::AppEvent event) {
-    if (event == OC::APP_EVENT_SUSPEND) {
-        scale_editor_instance.OnSendSysEx();
-    }
-}
+void SCALEEDITOR_handleAppEvent(OC::AppEvent event) {}
 
 void SCALEEDITOR_loop() {}
 

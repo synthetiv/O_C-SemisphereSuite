@@ -19,13 +19,12 @@
 // SOFTWARE.
 
 #include "HSApplication.h"
-#include "HSMIDI.h"
 
-class ClassName : public HSApplication, public SystemExclusiveHandler {
+class ClassName : public HSApplication {
 public:
 	void Start() {
 	}
-	
+
 	void Resume() {
 	}
 

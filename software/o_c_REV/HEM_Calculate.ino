@@ -38,7 +38,7 @@ public:
         selected = 0;
         ForEachChannel(ch)
         {
-            operation[ch] = ch;
+            operation[ch] = 0;
             rand_clocked[ch] = 0;
         }
         const char * op_name_list[] = {"Min", "Max", "Sum", "Diff", "Mean", "S&H", "Rnd"};
