@@ -132,8 +132,7 @@ UiMode Ui::DispatchEvents(App *app) {
     MENU_REDRAW = 1;
   }
 
-  // Turning screensaver seconds into screen-blanking minutes with the * 60 (chysn 9/2/2018)
-  if (idle_time() > (screensaver_timeout() * 60))
+  if (idle_time() > (screensaver_timeout()))
     screensaver_ = true;
 
   if (screensaver_)
