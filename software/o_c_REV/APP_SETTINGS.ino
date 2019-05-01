@@ -68,9 +68,9 @@ public:
 
     void View() {
         gfxHeader("Setup / About");
-        gfxPrint(0, 15, "Hemisphere Suite");
+        gfxPrint(0, 15, "Semisphere Suite");
         gfxPrint(0, 25, OC_VERSION);
-        gfxPrint(0, 35, "beigemaze.com/hs");
+        gfxPrint(0, 35, "a beast of both");
         gfxPrint(0, 55, "[CALIBRATE]   [RESET]");
 
 #ifdef BUCHLA_4U
