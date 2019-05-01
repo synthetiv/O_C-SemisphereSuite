@@ -156,8 +156,8 @@ UiMode Ui::Splashscreen(bool &reset_settings) {
     if (read_immediate(CONTROL_BUTTON_R))
       mode = UI_MODE_APP_SETTINGS;
 
-    reset_settings =
-    #ifdef BUCHLA_4U
+    reset_settings = 
+    #if defined(BUCHLA_4U) && !defined(IO_10V)
        read_immediate(CONTROL_BUTTON_UP) && read_immediate(CONTROL_BUTTON_R);
     #else
        read_immediate(CONTROL_BUTTON_UP) && read_immediate(CONTROL_BUTTON_DOWN);
